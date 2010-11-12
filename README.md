@@ -13,6 +13,7 @@ Each message is assigned a routing key, which is similar to a "topic" in a messa
 ## The Server
 
     $ npm install socket.io
+    $ npm install glob-trie.js
     $ node server/brokaw.js
 
 ## The Client
