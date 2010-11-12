@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-1.4.4.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://cdn.socket.io/stable/socket.io.js"></script>
+    <script src="brokaw.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      function puts(text) {
+        var out = document.getElementById("output");
+        out.value     += text + "\n";
+        out.scrollTop += 100;
+      }
+
+      $(document).ready(function() {
+        var brokaw = new Brokaw("localhost", 1025);
+        
+        brokaw.on("connect", function() {
+          puts("connected.");
+          
+          brokaw.subscribe("/simple/route/key");
+          brokaw.publish("/simple/route/key", "a message for a simple route key.");
+          
+          brokaw.unsubscribe("/simple/route/key");
+          brokaw.publish("/simple/route/key", "another message for a simple route key.");
+          
+          brokaw.subscribe("/simple/*");
+          brokaw.publish("/simple/route/key", "a third message for /simple/route/key.");
+          brokaw.publish("/simple/", "a message for /simple/.");
+        });
+        
+        brokaw.on("message", function(key, msg) {
+          puts(key + ": " + msg);
+        })
+        
+        brokaw.on("disconnect", function() {
+          puts("disconnected.");
+        })
+      });
+    </script>
+  </head>
+
+  <body>
+    Output:<br>
+    <textarea id="output" rows="20" cols="100"></textarea>
+  </body>
+</html>
